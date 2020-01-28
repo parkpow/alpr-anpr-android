@@ -39,6 +39,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity  implements IPickResult {
     String SHARED_PREF_NAME ="user_pref";
     String token = "";
     String countrycode="";
+    String result;
 
 
     //dialoag box setup
@@ -75,6 +77,11 @@ public class MainActivity extends AppCompatActivity  implements IPickResult {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         sharedPreferences=getSharedPreferences(SHARED_PREF_NAME,MODE_PRIVATE);
+        Calendar cal  = Calendar.getInstance();
+        //subtracting a day
+        cal.add(Calendar.DATE, -1);
+        SimpleDateFormat s = new SimpleDateFormat("MM/dd/");
+        result = s.format(new Date(cal.getTimeInMillis()));
         progressBar=findViewById(R.id.homeprogress);
         context=this;
         response_txt = findViewById(R.id.responseTime);
@@ -126,6 +133,7 @@ public class MainActivity extends AppCompatActivity  implements IPickResult {
                 @Override
                 public void onStart() {
                     progressBar.setVisibility(View.VISIBLE);
+                    Toast.makeText(MainActivity.this,"CurrentDate: "+result,Toast.LENGTH_SHORT).show();
                     Log.d("response", "onStart: ");
                     super.onStart();
                 }
@@ -134,10 +142,8 @@ public class MainActivity extends AppCompatActivity  implements IPickResult {
                     super.onSuccess(statusCode, headers, response);
                     Log.d("response ",response.toString()+" ");
                     try {
-                        //set it as current date.
-                        String date_n = new SimpleDateFormat("MM/dd/", Locale.getDefault()).format(new Date());
                         //image path
-                        String imagepath="https://app.platerecognizer.com/media/uploads/"+date_n+response.getString("filename");
+                        String imagepath="https://app.platerecognizer.com/media/uploads/"+result+response.getString("filename");
                         //json array or results
                         JSONArray Jsresults = response.getJSONArray("results");
                         if (Jsresults.length()>0)
