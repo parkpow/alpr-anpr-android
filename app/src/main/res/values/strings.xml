@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Plate Recognizer</string>
+    <string name="setting_Intro">Plate Recognizer offers FREE Plans with high-accuracy
+        \nlicense and plate recognition in over 60 countries worldwide</string>
+    <string name="country_codeGuide">2-letter country code separated by a space: gd de it fr
+        \nUSA and Australia can include the state:us-ca au-qld </string>
+
+
+
 </resources>

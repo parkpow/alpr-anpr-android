@@ -1,24 +1,26 @@
 package com.glowingsoft.carplaterecognizer.api;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.glowingsoft.carplaterecognizer.ui.MainActivity;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.ResponseHandlerInterface;
 
-import cz.msebera.android.httpclient.Header;
-
 public class WebRequest {
-    private static AsyncHttpClient client;
+    public static AsyncHttpClient client;
 
-    static{
-        String token = "ddecd03711e795147f3feb345ec198eff5d957b6";
+    static {
         //create object of loopj client
         //443 will save you from ssl exception
-        client = new AsyncHttpClient(true,80,443);
-        client.addHeader("Authorization", "Token "+token);
+            client = new AsyncHttpClient(true, 80, 443);
+
+
     }
+
     //concatenation of base url and file name
     private static String getAbsoluteUrl(String relativeUrl) {
         Log.d("response URL: ", GlobleClass.BASE_URL + relativeUrl+" ");
