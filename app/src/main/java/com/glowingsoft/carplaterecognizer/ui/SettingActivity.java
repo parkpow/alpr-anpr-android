@@ -10,6 +10,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.glowingsoft.carplaterecognizer.R;
@@ -29,14 +30,21 @@ public class SettingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
+        getSupportActionBar().hide();
         pref =getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         editor = pref.edit();;
+        ImageButton back =findViewById(R.id.backT_btn_type);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         ApiToken=findViewById(R.id.token_Code);
         regionCode=findViewById(R.id.editText2);
         applychanged=findViewById(R.id.button);
-        //to show enable home back button
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
-        setTitle("Settings");
+
+//        String mask = token.replaceAll("\\w(?=\\w{6})", "*");
         ApiToken.setText(token);
         applychanged.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,7 +56,7 @@ public class SettingActivity extends AppCompatActivity {
                     editor.putString("CarToken", currentToken).apply();
                     String regioncodes =regionCode.getText().toString();
                     editor.putString("RegionCode",regioncodes).apply();
-
+                    finish();
                     Toast.makeText(SettingActivity.this, "Saved Successfully", Toast.LENGTH_SHORT).show();
                 }
             }
