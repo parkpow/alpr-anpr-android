@@ -30,7 +30,6 @@ public class EditActivity extends AppCompatActivity {
                 finish();
             }
         });
-
         plate = findViewById(R.id.car_plate_edit);
         region = findViewById(R.id.region_code_edit);
         vihical = findViewById(R.id.vihical_type_edit);

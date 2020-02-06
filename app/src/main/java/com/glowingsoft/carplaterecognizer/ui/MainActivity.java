@@ -3,24 +3,28 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.cardview.widget.CardView;
-import androidx.lifecycle.Observer;
 import cz.msebera.android.httpclient.Header;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.webkit.WebView;
-import android.widget.EditText;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -29,6 +33,7 @@ import android.widget.Toast;
 
 import com.glowingsoft.carplaterecognizer.R;
 import com.glowingsoft.carplaterecognizer.api.WebRequest;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.squareup.picasso.Callback;
@@ -43,10 +48,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.lang.ref.WeakReference;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -56,6 +61,7 @@ public class MainActivity extends AppCompatActivity  implements IPickResult,View
     TextView plate_txt,region_txt,vihical_txt;
     Context context;
     ImageButton editResult;
+    Button nextImage;
     ProgressBar progressBar;
     SharedPreferences sharedPreferences;
     String SHARED_PREF_NAME ="user_pref";
@@ -63,8 +69,10 @@ public class MainActivity extends AppCompatActivity  implements IPickResult,View
     String countrycode="";
     Date date;
     DateFormat df;
-    String plate_type="",region_type="",car_type="";
+    String plate_type="",region_type="",car_type="",last_digits="";
     CardView plateCard,regionCard,vihicalCard;
+    FloatingActionButton floatingActionButton;
+    String imagepath;
 
 
     //dialoag box setup
@@ -74,7 +82,7 @@ public class MainActivity extends AppCompatActivity  implements IPickResult,View
             .setCancelText("Cancel")
             .setFlip(true)
             .setProgressText("Loading Image")
-            .setMaxSize(500)
+            .setMaxSize(10)
             .setPickTypes(EPickType.GALLERY, EPickType.CAMERA)
             .setCameraButtonText("Camera")
             .setGalleryButtonText("Gallery")
@@ -94,6 +102,10 @@ public class MainActivity extends AppCompatActivity  implements IPickResult,View
         df = new SimpleDateFormat("MM/dd/");
         // Use London time zone to format the date in
         df.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
+        nextImage=findViewById(R.id.next_image);
+        nextImage.setOnClickListener(this);
+        floatingActionButton=findViewById(R.id.fab);
+        floatingActionButton.setOnClickListener(this);
         progressBar=findViewById(R.id.homeprogress);
         plate_txt = findViewById(R.id.car_plate);
         region_txt = findViewById(R.id.region_code);
@@ -102,17 +114,22 @@ public class MainActivity extends AppCompatActivity  implements IPickResult,View
         plateCard=findViewById(R.id.cardView);
         vihicalCard=findViewById(R.id.cardView3);
         regionCard=findViewById(R.id.cardView2);
-        editResult=findViewById(R.id.edit_btn);
+        editResult=findViewById(R.id.setting_edit_btn);
         editResult.setOnClickListener(this);
         imageView = findViewById(R.id.imageView);
         imageView.setOnClickListener(this);
-
+        last_digits=sharedPreferences.getString("LastDigits", "");
     }
 
     //to change token value
     @Override
     protected void onResume() {
         super.onResume();
+        if(sharedPreferences.contains("checked") && sharedPreferences.getBoolean("checked", false)) {
+            editResult.setVisibility(View.VISIBLE);
+        }else {
+            editResult.setVisibility(View.GONE);
+        }
 
         token=sharedPreferences.getString("CarToken", "currentToken");
         if (token.equals("")){
@@ -156,7 +173,7 @@ public class MainActivity extends AppCompatActivity  implements IPickResult,View
                     Log.d("response ",response.toString()+" ");
                     try {
                         //image path
-                        String imagepath="https://app.platerecognizer.com/media/uploads/"+df.format(date)+response.getString("filename");
+                        imagepath="https://app.platerecognizer.com/media/uploads/"+df.format(date)+response.getString("filename");
                         //json array or results
                         JSONArray Jsresults = response.getJSONArray("results");
                         if (Jsresults.length()>0)
@@ -181,9 +198,9 @@ public class MainActivity extends AppCompatActivity  implements IPickResult,View
                                 regionCard.setVisibility(View.VISIBLE);
                                 plateCard.setVisibility(View.VISIBLE);
                                 vihicalCard.setVisibility(View.VISIBLE);
-                                editResult.setVisibility(View.VISIBLE);
+                                nextImage.setVisibility(View.VISIBLE);
+                                floatingActionButton.setVisibility(View.VISIBLE);
                                 emptyImage.setVisibility(View.GONE);
-
                             }
 
                         }
@@ -194,50 +211,48 @@ public class MainActivity extends AppCompatActivity  implements IPickResult,View
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                     super.onFailure(statusCode, headers, throwable, errorResponse);
-                    Log.d("response", "onFailure: "+errorResponse+" ");
+                    Log.d("response1", "onFailure: " + errorResponse + " ");
                     progressBar.setVisibility(View.GONE);
-                    Toast.makeText(MainActivity.this,"Invalid Image or Token Code",Toast.LENGTH_SHORT).show();
+                    editResult.setVisibility(View.GONE);
+                    regionCard.setVisibility(View.GONE);
+                    plateCard.setVisibility(View.GONE);
+                    vihicalCard.setVisibility(View.GONE);
+                    nextImage.setVisibility(View.GONE);
+                    floatingActionButton.setVisibility(View.GONE);
+                    emptyImage.setVisibility(View.VISIBLE);
+                    Toast.makeText(MainActivity.this, errorResponse.toString(), Toast.LENGTH_SHORT).show();
                 }
-
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
                     super.onFailure(statusCode, headers, throwable, errorResponse);
-                    Log.d("response", "onFailure: "+errorResponse+" ");
+                    Log.d("response2", "onFailure: "+errorResponse+" ");
                     progressBar.setVisibility(View.GONE);
-                    Toast.makeText(MainActivity.this,"Invalid Image or Token Code",Toast.LENGTH_SHORT).show();
+                    editResult.setVisibility(View.GONE);
+                    regionCard.setVisibility(View.GONE);
+                    plateCard.setVisibility(View.GONE);
+                    vihicalCard.setVisibility(View.GONE);
+                    nextImage.setVisibility(View.GONE);
+                    emptyImage.setVisibility(View.VISIBLE);
+                        Toast.makeText(MainActivity.this,errorResponse.toString()+"",Toast.LENGTH_LONG).show();
                 }
-
                 @Override
                 public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                     super.onFailure(statusCode, headers, responseString, throwable);
-                    Log.d("response", "onFailure: "+responseString+" ");
+                    Log.d("response3", "onFailure: "+responseString+" ");
                     progressBar.setVisibility(View.GONE);
-                    Toast.makeText(MainActivity.this,"Invalid Image or Token Code",Toast.LENGTH_SHORT).show();
+                    editResult.setVisibility(View.GONE);
+                    regionCard.setVisibility(View.GONE);
+                    plateCard.setVisibility(View.GONE);
+                    vihicalCard.setVisibility(View.GONE);
+                    nextImage.setVisibility(View.GONE);
+                    emptyImage.setVisibility(View.VISIBLE);
+                        Toast.makeText(MainActivity.this,responseString+"No Internet Connection",Toast.LENGTH_LONG).show();
                 }
             });
         } else {
             //Handle possible errors
             //TODO: do what you have to do with r.getError();
             Toast.makeText(this, r.getError().getMessage(), Toast.LENGTH_LONG).show();
-        }
-    }
-    @Override
-    public void onClick(View v) {
-        if (v.getId()==R.id.imageView)
-        {
-            PickImageDialog.build(setup).show(MainActivity.this);
-        }
-        if (v.getId()==R.id.edit_btn)
-        {
-            plate_type = plate_txt.getText().toString();
-            region_type=region_txt.getText().toString();
-            car_type=vihical_txt.getText().toString();
-
-            Intent intent =new Intent(MainActivity.this,EditActivity.class);
-            intent.putExtra("car_plate",plate_type );
-            intent.putExtra("region_code", region_type);
-            intent.putExtra("car_type",car_type );
-            startActivityForResult(intent, 123);
         }
     }
 
@@ -256,6 +271,67 @@ public class MainActivity extends AppCompatActivity  implements IPickResult,View
             Toast.makeText(this, "Results saved", Toast.LENGTH_SHORT).show();
         }
     }
+    @Override
+    public void onClick(View v) {
+        if (v.getId()==R.id.imageView)
+        {
+            if (token.isEmpty()) {
+                Toast.makeText(this,"Set Your Token", Toast.LENGTH_LONG).show();
+
+            }
+            PickImageDialog.build(setup).show(MainActivity.this);
+        }
+        if (v.getId()==R.id.setting_edit_btn)
+        {
+
+            plate_type = plate_txt.getText().toString();
+            region_type=region_txt.getText().toString();
+            car_type=vihical_txt.getText().toString();
+            if (plate_type.isEmpty())
+            {
+                Toast.makeText(MainActivity.this,"Nothing to Edit Now",Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Intent intent = new Intent(MainActivity.this, EditActivity.class);
+                intent.putExtra("car_plate", plate_type);
+                intent.putExtra("region_code", region_type);
+                intent.putExtra("car_type", car_type);
+                startActivityForResult(intent, 123);
+            }
+        }
+        if (v.getId()==R.id.next_image)
+        {
+            PickImageDialog.build(setup).show(MainActivity.this);
+        }
+        if (v.getId()==R.id.fab)
+        {
+
+//            String path = uri.getPath();
+            String plate = plate_txt.getText().toString();
+            String region = region_txt.getText().toString();
+            String car = vihical_txt.getText().toString();
+            Uri bmpUri = getLocalBitmapUri(imageView);
+            //set it as current date.
+            String date_n = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
+            String share="Date: "+date_n+"\nCar Plate: "+plate+"\nRegion Code: "+region+"\nVihicle Type: "+car+"\nToken Code: "+last_digits;
+            Log.d("response", "onActivityResult: "+plate+" ");
+            if (bmpUri != null) {
+                Uri imageUri = Uri.parse("android.resource://" + getPackageName()
+                        + "/drawable/" + "ic_launcher");
+                Intent shareIntent = new Intent();
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.putExtra(Intent.EXTRA_TEXT, share);
+                shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
+                shareIntent.setType("image/jpeg");
+                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startActivity(Intent.createChooser(shareIntent, "send"));
+            }
+            else {
+                Log.d("response", "onFailure:");
+            }
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -263,8 +339,6 @@ public class MainActivity extends AppCompatActivity  implements IPickResult,View
         inflater.inflate(R.menu.main_menu, menu);
         return true;
     }
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId()==R.id.settings)
@@ -273,14 +347,32 @@ public class MainActivity extends AppCompatActivity  implements IPickResult,View
             startActivity(intent);
             return true;
         }
-        if (item.getItemId()==R.id.next_image)
-        {
-            PickImageDialog.build(setup).show(MainActivity.this);
-            return true;
-        }
-
-
         return super.onOptionsItemSelected(item);
     }
+///to
 
+    public Uri getLocalBitmapUri(ImageView imageView) {
+        // Extract Bitmap from ImageView drawable
+        Drawable drawable = imageView.getDrawable();
+        Bitmap bmp = null;
+        if (drawable instanceof BitmapDrawable){
+            bmp = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+        } else {
+            return null;
+        }
+        // Store image to default external storage directory
+        Uri bmpUri = null;
+        try {
+            File file =  new File(Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_DOWNLOADS), "share_image_" + System.currentTimeMillis() + ".jpeg");
+            file.getParentFile().mkdirs();
+            FileOutputStream out = new FileOutputStream(file);
+            bmp.compress(Bitmap.CompressFormat.JPEG, 40, out);
+            out.close();
+            bmpUri = Uri.fromFile(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bmpUri;
+    }
 }

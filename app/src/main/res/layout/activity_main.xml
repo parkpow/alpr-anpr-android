@@ -18,7 +18,7 @@
 
 
         <ImageButton
-            android:id="@+id/edit_btn"
+            android:id="@+id/setting_edit_btn"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginTop="10dp"
@@ -39,9 +39,11 @@
             android:layout_height="250dp"
             android:scaleType="fitXY"
             android:src="@drawable/upload"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0">
 
         </ImageView>
 
@@ -61,13 +63,14 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
             android:visibility="gone"
             app:cardCornerRadius="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edit_btn"
+            app:layout_constraintTop_toBottomOf="@+id/setting_edit_btn"
             app:layout_constraintVertical_bias="0.0">
 
             <LinearLayout
@@ -184,14 +187,14 @@
             android:layout_height="60dp"
             android:layout_marginStart="10dp"
             android:layout_marginTop="24dp"
-            android:visibility="gone"
             android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
+            android:visibility="gone"
             app:cardCornerRadius="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardView3">
+            app:layout_constraintTop_toBottomOf="@+id/cardView3"
+            app:layout_constraintVertical_bias="0.0">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -242,6 +245,25 @@
 
         </androidx.cardview.widget.CardView>
 
+        <Button
+            android:id="@+id/next_image"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="80dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="80dp"
+            android:layout_marginBottom="16dp"
+            android:background="@color/colorPrimary"
+            android:text="Next Image"
+            android:textColor="@color/white"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardView2">
+
+        </Button>
+
         <ImageView
             android:id="@+id/empty_image"
             android:layout_width="0dp"
@@ -256,6 +278,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView"
             app:srcCompat="@drawable/nothingtoshow" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="15dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/ic_share_white_24dp" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
