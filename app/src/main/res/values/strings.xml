@@ -2,6 +2,17 @@
     <string name="app_name">Plate Recognizer</string>
     <string name="setting_Intro">Plate Recognizer offers FREE Plans with high-accuracy license and plate recognition in over 60 countries worldwide</string>
     <string name="country_codeGuide">2-letter country code separated by a space: gd de it fr USA and Australia can include the state:us-ca au-qld </string>
-
+    <string-array name="size">
+        <item>100</item>
+        <item>90</item>
+        <item>80</item>
+        <item>70</item>
+        <item>60</item>
+        <item>50</item>
+        <item>40</item>
+        <item>30</item>
+        <item>20</item>
+        <item>10</item>
+    </string-array>
 
 </resources>

@@ -28,6 +28,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     implementation 'com.github.jrvansuita:PickImage:2.2.4'
+    implementation 'id.zelory:compressor:2.1.0'
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'com.loopj.android:android-async-http:1.4.9'
     implementation 'com.google.android.material:material:1.1.0'

@@ -22,12 +22,12 @@ public class WebRequest {
     }
 
     //concatenation of base url and file name
-    private static String getAbsoluteUrl(String relativeUrl) {
-        Log.d("response URL: ", GlobleClass.BASE_URL + relativeUrl+" ");
-        return GlobleClass.BASE_URL + relativeUrl;
-    }
+//    private static String getAbsoluteUrl(String relativeUrl) {
+//        Log.d("response URL: ", GlobleClass.BASE_URL + relativeUrl+" ");
+//        return GlobleClass.BASE_URL + relativeUrl;
+//    }
     public static void post(Context context, String url, RequestParams params, ResponseHandlerInterface responseHandler) {
-        client.post(context, getAbsoluteUrl(url),params, responseHandler);
+        client.post(context, url,params, responseHandler);
         Log.d("response", "post: request sent");
     }
 
