@@ -11,7 +11,7 @@ Using this Android Mobile App, you can easily take a photo with your phone camer
 
 Sign up for a [**Free Trial**](https://app.platerecognizer.com/accounts/signup/?utm_source=github&amp;utm_medium=website) now (no credit card required) or **learn more** at [https://platerecognizer.com](https://platerecognizer.com/).
 
-# How to Get LPR on Android App
+## How to Get LPR on Android App
 
 - You need an **API token** from [Plate Recognizer](https://platerecognizer.com/) to use app. Get the [APK package](https://github.com/parkpow/alpr-anpr-android/releases) or build it yourself.
 - To **build** the app, we recommand using [Android Studio](https://developer.android.com/studio).
