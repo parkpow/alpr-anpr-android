@@ -1,4 +1,4 @@
-# ALPR, ANPR on Mobile App - Android
+# Automatic License Plate Recognition (ALPR, ANPR) on Mobile App - Android
 Get high-accuracy, developer-friendly **automatic license plate recognition** ([ALPR](https://platerecognizer.com/?utm_source=github&amp;utm_medium=website)) or automatic number plate recognition ([ANPR](https://platerecognizer.com/?utm_source=github&amp;utm_medium=website)) on a mobile app in Android!
 
 Our machine-learning software:
