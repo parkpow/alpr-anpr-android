@@ -156,7 +156,9 @@ public class MainActivity extends AppCompatActivity  implements IPickResult,View
             String compressed=compressImage(file);
             countrycode=sharedPreferences.getString("RegionCode","");
             String baseurl=sharedPreferences.getString("BaseUrl","https://api.platerecognizer.com/v1/plate-reader/");
-//            Log.d("response", "filepath: "+file+" ");
+
+
+            Log.d("response", "filepath: "+file+" ");
             try {
                 params.put("upload", new File(compressed));
             } catch (FileNotFoundException e) {
@@ -184,7 +186,7 @@ public class MainActivity extends AppCompatActivity  implements IPickResult,View
                     Log.d("response ",response.toString()+" ");
                     try {
                         //image path
-                        imagepath="https://app.platerecognizer.com/media/uploads/"+df.format(date)+response.getString("filename");
+                        imagepath="https://us-east-1.linodeobjects.com/platerec-api/uploads/"+df.format(date)+response.getString("filename");
                         //json array or results
                         JSONArray Jsresults = response.getJSONArray("results");
                         if (Jsresults.length()>0)
@@ -472,7 +474,7 @@ public class MainActivity extends AppCompatActivity  implements IPickResult,View
             e.printStackTrace();
         }
         FileOutputStream out = null;
-        String filename = getFilename();
+        String filename = getFilename(this);
         try {
             out = new FileOutputStream(filename);
             //          write the compressed bitmap at the destination specified by filename.
@@ -483,8 +485,8 @@ public class MainActivity extends AppCompatActivity  implements IPickResult,View
         }
         return filename;
     }
-    public static String getFilename() {
-        File file = new File(Environment.getExternalStorageDirectory().getPath(), ".Foldername/PlateRecognizerHistory");
+    public static String getFilename(Context context) {
+        File file = new File(context.getFilesDir().getPath(), ".Foldername/PlateRecognizerHistory");
 
         if (!file.exists()) {
             file.mkdirs();
