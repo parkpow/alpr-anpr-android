@@ -1,12 +1,12 @@
 ## LPR Android App
 
 - **Download** the [APK package](https://github.com/parkpow/alpr-anpr-android/releases).
-  - You can also build it, we recommand using [Android Studio](https://developer.android.com/studio).
-- Get an **API token** from [Plate Recognizer](https://platerecognizer.com/) and put in the app settings.
+  - You can also build it from source. We recommand using [Android Studio](https://developer.android.com/studio).
+- Get an **API token** from [Plate Recognizer](https://platerecognizer.com/) and put it in the app settings.
 
 ![screenshot](assets/screenshot.jpg)
 
-# Automatic License Plate Recognition (ALPR, ANPR) on Mobile App - Android
+## Automatic License Plate Recognition (ALPR, ANPR) on Mobile App - Android
 Get high-accuracy, developer-friendly **automatic license plate recognition** ([ALPR](https://platerecognizer.com/?utm_source=github&amp;utm_medium=website)) or automatic number plate recognition ([ANPR](https://platerecognizer.com/?utm_source=github&amp;utm_medium=website)) on a mobile app in Android!
 
 Our machine-learning software:
