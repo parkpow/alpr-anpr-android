@@ -3,6 +3,7 @@
 - **Download** the [APK package](https://github.com/parkpow/alpr-anpr-android/releases).
   - You can also build it from source. We recommand using [Android Studio](https://developer.android.com/studio).
 - Get an **API token** from [Plate Recognizer](https://platerecognizer.com/) and put it in the app settings.
+- You may also want to check a [similar project](from https://github.com/kjbaker-uk/platerecognizer-android-example) in Kotlin.
 
 ![screenshot](assets/screenshot.jpg)
 
